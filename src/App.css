@@ -10,14 +10,7 @@ body {
 .main-content {
   width: 1200px;
   margin: 6em auto;
-}
-
-.character {
-  transition: all 0.3s;
-}
-
-.word.completed {
-  color: green;
+  padding: 40px;
 }
 
 .playerInput {
@@ -33,48 +26,103 @@ body {
   padding: 5px;
 }
 
-.something {
+.phraseContainer {
   position: relative;
   min-height: 100px;
   margin: 30px 0;
+  font-size: 20px;
+  font-family: "Roboto Mono", sans-serif;
 }
 
 .phrase {
   font-size: 20px;
-  font-family: "Roboto Mono", sans-serif;
   word-break: break-all;
-  min-height: 100px;
-
   position: absolute;
-  /* display: flex; */
 }
 
 .playerPhrase {
-  font-size: 20px;
-  font-family: "Roboto Mono", sans-serif;
   position: absolute;
-  min-height: 100px;
   display: flex;
 }
 
-.character.correct {
-  color: green;
-}
-
-.character.incorrect {
-  color: red;
-  background-color: red;
-}
-
 .completedWords {
-  /* font-size: 20px;
-  font-family: "Roboto Mono", sans-serif;
-  position: absolute;
-  min-height: 100px;
-  */
+  z-index: 2;
   margin-right: 12.02px;
 }
 
 .word.completed {
   /* margin-right: 12.02px; */
+}
+
+.play-btn {
+  display: block;
+  padding: 20px 82px 20px 58px;
+  border-radius: 5px;
+  color: #fff;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyxpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MjI4NzVBMDRGNzdBMTFFN0I3MEQ4RDRDRTAyMDNDNkMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MjI4NzVBMDNGNzdBMTFFN0I3MEQ4RDRDRTAyMDNDNkMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIEVsZW1lbnRzIDE0LjAgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MEE3NDVDMDNGNzZDMTFFN0JEQzM5RjMwRkYwQUU3NzkiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MEE3NDVDMDRGNzZDMTFFN0JEQzM5RjMwRkYwQUU3NzkiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7RsUTMAAAAyElEQVR42pxTURHDMAhlc1ALtYCFWKiFWIiFWKiWTkIroRY6CYzsyI3ShOvt3b2PXHgPCASICAyROTN3+mFlZuZg4/VhEKGHgxlbBkW8mOBdBC0ka2Azr2I6OiahGqCXQe5bJns16PU9KZPQMQkg5ZJXpmOS4carWxON+QkAb+ij3G3qjJcIp4VDplCzp9Zjg2zYP+ICrEvkjTF2xItepNSoAGWUbnv6L2S6h9Nk7E+MzurWFUeteXxdrpiYgTnKuYzyJTzhI8AACWk3hRI4LJMAAAAASUVORK5CYII=);
+  background-repeat: no-repeat;
+  background-color: #005894;
+  background-position: right 20px center;
+  box-shadow: 0 4px 4px 0 rgb(0 0 0 / 16%);
+  font-weight: 700;
+  border: 1px solid #005894;
+}
+
+.time-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-description {
+  font-weight: bold;
+  font-size: 20px;
+  color: #3b5998;
+}
+
+.stats {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.wpm {
+  color: #005894;
+  font-weight: bold;
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+.timer {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.progress-bar {
+  border-bottom: 5px dashed black;
+}
+
+.car {
+  width: 64px;
+  height: 64px;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.character {
+  transition: all 0.3s;
+}
+
+.word.completed {
+  color: rgb(93, 212, 93);
+}
+
+.character.correct {
+  color: rgb(93, 212, 93);
+}
+
+.character.incorrect {
+  z-index: -1;
+  background-color: red;
+  opacity: 0.7;
 }

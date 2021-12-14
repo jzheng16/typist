@@ -4,10 +4,10 @@ const Navbar = () => {
   return (
     <header>
       <nav className="nav">
-        <ul class="nav-ul">
-          <li class="nav-item">typeracer</li>
-          <li class="nav-item">1</li>
-          <li class="nav-item">2</li>
+        <ul className="nav-ul">
+          <li className="nav-item">typeracer</li>
+          <li className="nav-item">1</li>
+          <li className="nav-item">2</li>
         </ul>
       </nav>
     </header>

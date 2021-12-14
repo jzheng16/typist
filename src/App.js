@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <Navbar />
-      <main class="main-content">
+      <main className="main-content">
         <Game />
       </main>
 
