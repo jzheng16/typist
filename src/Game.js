@@ -105,7 +105,6 @@ function Game() {
       setIntervalId(id);
       playerInputEl.current.focus();
     } else if (gameStatus === 'completed' && intervalId) {
-      console.log('completed');
       scores.push({ time: Date.now(), wpm });
       localStorage.setItem('scores', JSON.stringify(scores));
       setScores(scores);
