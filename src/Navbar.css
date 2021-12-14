@@ -1,0 +1,25 @@
+header {
+  height: 100px;
+  background-color: #005894;
+}
+
+.nav-ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100px;
+  color: white;
+  font-size: 20px;
+}
+
+.nav-item {
+  margin: 0 2rem;
+  list-style-type: none;
+}
+
+.nav-item:first-child {
+  margin-right: auto;
+  margin-left: 4em;
+}
