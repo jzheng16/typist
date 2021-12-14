@@ -1,38 +1,32 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import faker from 'faker';
+import { useEffect, useState, useRef } from 'react';
 import car from './images/sports-car.png';
-const SECONDS_PER_ROUND = 100;
+import Scoreboard from './Scoreboard';
+import { generateNewSentence, generateUniqueId } from './helpers';
+const SECONDS_PER_ROUND = 60;
+const COUNTDOWN_IN_SECONDS = 5;
 
 function Game() {
 
   // By word or by letter? If by letter have to find a way to track whena  word is completed nextIndex is a space or if last one just make sure lenght ===??
+  const [countdownInterval, setCountdownInterval] = useState(null);
+  const [countdown, setCountdown] = useState(COUNTDOWN_IN_SECONDS);
+  const [scores, setScores] = useState([]);
   const [secondsRemaining, setSecondsRemaining] = useState(SECONDS_PER_ROUND);
   const [intervalId, setIntervalId] = useState(null);
   const [playerInput, setPlayerInput] = useState('');
-  const [sentence, setSentence] = useState([]);
+  const [sentence, setSentence] = useState(generateNewSentence());
   const [currIndex, setCurrentIndex] = useState(0);
-  const [gameStatus, setGameStatus] = useState('start');
+  const [gameStatus, setGameStatus] = useState('not-started');
   const [wordIndex, setWordIndex] = useState(0);
   const [wpm, setWpm] = useState(0);
   const playerInputEl = useRef(null);
 
   const preventCopyPasting = (e) => e.preventDefault();
 
-  const word = sentence[wordIndex];
-  const calculateWpm = useCallback(() => {
-    const timeElapsed = SECONDS_PER_ROUND - secondsRemaining;
-    const wpm = Math.floor((wordIndex + 1) / (timeElapsed / 60));
-    setWpm(wpm);
-  }, [wordIndex, secondsRemaining])
-
-
   // Handle player keypress
   const determine = (e) => {
+    const word = sentence[wordIndex];
     const currKey = e.target.value[e.target.value.length - 1];
-    // console.log('file: App.js ~ line 37 ~ determine ~ currKey', currKey);
-    // console.log('curr Correct Index', currIndex);
-    // console.log('playerinput and currently typed in', playerInput, e.target.value)
 
     // Backspace logic: Only subtract currIndex if the user deletes already correct letters in the input field 
     if (playerInput.length > e.target.value.length) {
@@ -45,24 +39,13 @@ function Game() {
     setPlayerInput(e.target.value);
   };
 
-  const generateNewSentence = () => {
-    const words = faker.lorem.words(10).split(' ');
-    const wordsWithSpaces = words.map((word, i) => {
-      if (i === 0) {
-        word = word[0].toUpperCase() + word.slice(1);
-      }
-      if (i !== words.length - 1) {
-        word = word + ' ';
-      }
-      if (i === words.length - 1) {
-        word = word + '.';
-      }
-      return word;
-    })
-    return wordsWithSpaces;
-    // put into an array of words each (space included)
-  }
+  // Get existing scores
+  useEffect(() => {
+    const savedScores = JSON.parse(localStorage.getItem('scores')) || [];
+    setScores(savedScores);
+  }, []);
 
+  //Complete game if timer runs out
   useEffect(() => {
     if (secondsRemaining <= 0) {
       setGameStatus('completed');
@@ -72,44 +55,69 @@ function Game() {
 
   // Logic after a user either backspaces or enters a correct letter
   useEffect(() => {
-    // If Word is completed
-    if (currIndex > 0 && currIndex === word.length) {
-      console.log('new word...');
-      setWordIndex(prevState => prevState + 1);
-      setPlayerInput('');
-      setCurrentIndex(0);
-      calculateWpm();
-    }
 
     // If game is completed
     if (sentence.length > 0 && wordIndex === sentence.length) {
       setGameStatus('completed');
+    } else {
+      // If Word is completed
+      const word = sentence[wordIndex];
+      if (currIndex > 0 && currIndex === word.length) {
+        setWordIndex(prevState => prevState + 1);
+        setPlayerInput('');
+        setCurrentIndex(0);
+        const timeElapsed = SECONDS_PER_ROUND - secondsRemaining;
+        const wpm = Math.floor((wordIndex + 1) / (timeElapsed / 60));
+        setWpm(wpm);
+      }
     }
 
-  }, [currIndex, sentence, word, wordIndex, calculateWpm])
+
+
+
+  }, [currIndex, sentence, wordIndex, secondsRemaining])
 
   const play = () => {
-    setGameStatus('in-progress');
+    setGameStatus('start');
   }
 
   useEffect(() => {
-    if (gameStatus === 'in-progress' && !intervalId) {
+    if (countdown === 0) {
+      setGameStatus('in-progress');
+      setCountdown(COUNTDOWN_IN_SECONDS);
+      clearInterval(countdownInterval);
+      setCountdownInterval(null);
+    }
+  }, [countdown, countdownInterval])
+
+  useEffect(() => {
+
+    if (gameStatus === 'start' && !countdownInterval) {
+      setSentence(generateNewSentence());
+      setWpm(0);
       setWordIndex(0);
       setCurrentIndex(0);
       setPlayerInput('');
-      setWpm(0);
-      setSentence(generateNewSentence());
+      const id = setInterval(() => {
+        setCountdown(prevState => prevState - 1);
+      }, 1000);
+      setCountdownInterval(id);
+    } else if (gameStatus === 'in-progress' && !intervalId) {
       const id = setInterval(() => {
         setSecondsRemaining(prevState => prevState - 1);
       }, 1000);
       setIntervalId(id);
       playerInputEl.current.focus();
-    } else if (gameStatus === 'completed') {
-      clearInterval(intervalId);
+    } else if (gameStatus === 'completed' && intervalId) {
+      console.log('completed');
+      scores.push({ time: Date.now(), wpm });
+      localStorage.setItem('scores', JSON.stringify(scores));
+      setScores(scores);
       setIntervalId(null);
+      clearInterval(intervalId);
       setSecondsRemaining(SECONDS_PER_ROUND);
     }
-  }, [gameStatus, intervalId])
+  }, [gameStatus, intervalId, wpm, scores, countdownInterval])
 
   // Calculate minutes remaining formatted
   let minutesRemaining = '';
@@ -123,18 +131,30 @@ function Game() {
     minutesRemaining = `:${secondsRemaining % 60}`;
   }
 
-  if (gameStatus === 'start') {
+
+  if (gameStatus === 'not-started' || gameStatus === 'start') {
     return (
       <div>
-        <h2>Typeracer - See how fast you can type and compete against others</h2>
-        <button className="play-btn" onClick={play}>Play</button>
+        <h1>Typeracer - See how fast you can type and compete against others</h1>
+        <div className={`countdownContainer ${countdownInterval ? 'visible' : 'invisible'}`}>
+          <div className="circle red"></div>
+          <div className={`circle yellow ${countdown > 1 ? 'active' : ''}`}></div>
+          <div className={`circle green ${countdown === 1 ? 'active' : ''}`}></div>
+          <p>:0{countdown}</p>
+        </div>
+        {!countdownInterval &&
+          <div>
+            <h2>Your High Scores</h2>
+            <Scoreboard scores={scores} />
+            <button className="play-btn" onClick={play}>Play</button>
+          </div>
+        }
       </div>
     )
   } else if (gameStatus === 'in-progress') {
     return (
       <div>
-
-        <section>
+        <section class="stats-container">
           <div className="time-container">
             <p className="game-description">The race is on! Type the text below:</p>
             <div className="stats">
@@ -147,46 +167,55 @@ function Game() {
           </div>
         </section>
 
-        <div className="phraseContainer">
-          <div className="phrase">
-            {sentence.map((word, i) => {
-              return (
-                <span key={uuidv4()} className={`word`}>{word}</span>
-              )
-            })}
-          </div>
-          <div className="playerPhrase">
-            {wordIndex > 0 &&
-              <div className="completedWords">
-                {sentence.slice(0, wordIndex).map((word, i) => {
-                  return (
-                    <span key={uuidv4()} className="word completed">{word}</span>
-                  )
-                })}
-              </div>
-            }
-            <div className="currentInputDisplay">
-              {playerInput.split('').slice(0, currIndex).map((letter, i) => {
+        <div className="gameContainer">
+          <div className="phraseContainer">
+            <div className="phrase">
+              {sentence.map((word, i) => {
                 return (
-                  <span key={uuidv4()} className={`character correct`}>{letter}</span>
-                )
-              })}
-              {playerInput.split('').slice(currIndex).map((letter, i) => {
-                return (
-                  <span key={uuidv4()} className={`character incorrect`}>&nbsp;</span>
+                  <span key={generateUniqueId()} className={`word`}>{word}</span>
                 )
               })}
             </div>
+            <div className="playerPhrase">
+              {wordIndex > 0 &&
+                <div className="completedWords">
+                  {sentence.slice(0, wordIndex).map((word, i) => {
+                    return (
+                      <span key={generateUniqueId()} className="word completed">{word}</span>
+                    )
+                  })}
+                </div>
+              }
+              <div className="currentInputDisplay">
+                {playerInput.split('').slice(0, currIndex).map((letter, i) => {
+                  return (
+                    <span key={generateUniqueId()} className={`character correct`}>{letter}</span>
+                  )
+                })}
+                {playerInput.split('').slice(currIndex).map((letter, i) => {
+                  return (
+                    <span key={generateUniqueId()} className={`character incorrect`}>&nbsp;</span>
+                  )
+                })}
+              </div>
+            </div>
           </div>
+          <input onCopy={preventCopyPasting} onPaste={preventCopyPasting} onCut={preventCopyPasting} className="playerInput" onChange={determine} type="text" placeholder="Type text here" value={playerInput} ref={playerInputEl} />
         </div>
-        <input onCopy={preventCopyPasting} onPaste={preventCopyPasting} onCut={preventCopyPasting} className="playerInput" onChange={determine} type="text" placeholder="Type text here" value={playerInput} ref={playerInputEl} />
+
       </div>
     )
   } else {
     return (
       <div className="endContainer">
-        Game done
-        <button className="restart" onClick={play}>New Race</button>
+        <div className="summary">
+          <h1>Summary</h1>
+
+        </div>
+
+        <h2>Your High Scores</h2>
+        <Scoreboard scores={scores} />
+        <button className="play-btn" onClick={play}>New Race</button>
       </div>
 
 

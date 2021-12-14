@@ -1,25 +1,29 @@
 header {
   height: 100px;
   background-color: #005894;
+  padding: 0 20px;
 }
 
 .nav-ul {
   margin: 0;
   padding: 0;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
   height: 100px;
   color: white;
   font-size: 20px;
-}
-
-.nav-item {
-  margin: 0 2rem;
   list-style-type: none;
 }
 
+.nav-item {
+  margin-right: 1rem;
+}
 .nav-item:first-child {
-  margin-right: auto;
-  margin-left: 4em;
+  position: relative;
+  top: 5px;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
 }

@@ -5,11 +5,12 @@
 body {
   position: relative;
   margin: 0;
+  min-height: 100vh;
 }
 
 .main-content {
-  width: 1200px;
-  margin: 6em auto;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 40px;
 }
 
@@ -56,6 +57,7 @@ body {
 
 .play-btn {
   display: block;
+  cursor: pointer;
   padding: 20px 82px 20px 58px;
   border-radius: 5px;
   color: #fff;
@@ -66,6 +68,10 @@ body {
   box-shadow: 0 4px 4px 0 rgb(0 0 0 / 16%);
   font-weight: 700;
   border: 1px solid #005894;
+}
+
+.stats-container {
+  margin-bottom: 2em;
 }
 
 .time-container {
@@ -125,4 +131,110 @@ body {
   z-index: -1;
   background-color: red;
   opacity: 0.7;
+}
+
+.summary {
+}
+
+.gameContainer {
+  padding: 20px 10px;
+  background-color: #f6fbff;
+  border: 1px solid #c7d5d9;
+  border-radius: 6px;
+}
+
+.countdownContainer {
+  font-size: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 500px;
+  margin: 2em auto;
+  border: 3px solid black;
+  padding: 10px;
+  position: absolute;
+  top: 350px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.5s;
+  opacity: 0;
+}
+.countdownContainer.visible {
+  opacity: 1;
+}
+/* .countdownContainer.invisible {
+  transition: all 0.5s;
+  opacity: 0;
+} */
+
+.circle {
+  position: relative;
+  width: 100px;
+  height: 100px;
+
+  border-radius: 50%;
+  margin: 0 5px;
+  border: 3px solid black;
+  transition: all 0.3s;
+}
+.circle::after {
+  position: absolute;
+  left: 0;
+  top: 0;
+  content: "";
+  bottom: 0;
+  right: 0;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.circle.red::after {
+  background-color: red;
+  opacity: 0.05;
+}
+.circle.yellow::after {
+  opacity: 0.05;
+  background-color: yellow;
+}
+.circle.yellow.active::after {
+  opacity: 1;
+}
+
+.circle.green {
+  margin-right: 20px;
+}
+.circle.green::after {
+  background-color: green;
+  opacity: 0.05;
+}
+.circle.green.active::after {
+  opacity: 1;
+}
+
+@media screen and (max-width: 580px) {
+  h1 {
+    font-size: 26px;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .countdownContainer {
+    top: 400px;
+  }
+  .circle {
+    width: 75px;
+    height: 75px;
+  }
+
+  .stats {
+    margin: 0;
+  }
+}
+@media screen and (max-width: 486px) {
+  .time-container {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 }
