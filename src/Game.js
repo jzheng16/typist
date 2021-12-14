@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import faker from 'faker';
 
-const SECONDS_PER_ROUND = 5;
+const SECONDS_PER_ROUND = 100;
 
 function Game() {
 
@@ -14,6 +14,8 @@ function Game() {
   const [currIndex, setCurrentIndex] = useState(0);
   const [gameStatus, setGameStatus] = useState('start');
   const [wordIndex, setWordIndex] = useState(0);
+  const [wpm, setWpm] = useState(0);
+  const playerInputEl = useRef(null);
 
   const preventCopyPasting = (e) => e.preventDefault();
 
@@ -40,10 +42,18 @@ function Game() {
   const generateNewSentence = () => {
     const words = faker.lorem.words(10).split(' ');
     const wordsWithSpaces = words.map((word, i) => {
+      if (i === 0) {
+        word = word[0].toUpperCase() + word.slice(1);
+      }
+
       if (i !== words.length - 1) {
         word = word + ' ';
       }
-      return word.toUpperCase();
+
+      if (i === words.length - 1) {
+        word = word + '.';
+      }
+      return word;
     })
     return wordsWithSpaces;
     // put into an array of words each (space included)
@@ -65,7 +75,7 @@ function Game() {
       setPlayerInput('');
       setCurrentIndex(0);
       setScore(prevState => prevState + 10);
-
+      calculateWpm();
     }
 
     // If game is completed
@@ -85,11 +95,13 @@ function Game() {
       setWordIndex(0);
       setCurrentIndex(0);
       setPlayerInput('');
+      setWpm(0);
       setSentence(generateNewSentence());
       const id = setInterval(() => {
         setSecondsRemaining(prevState => prevState - 1);
       }, 1000);
       setIntervalId(id);
+      playerInputEl.current.focus();
     } else if (gameStatus === 'completed') {
       clearInterval(intervalId);
       setIntervalId(null);
@@ -97,7 +109,14 @@ function Game() {
     }
   }, [gameStatus, intervalId])
 
+  const calculateWpm = () => {
+    // How to calculate wpm??
+    // Math.floor(Time elapsed * wordsCompleted / 60)
+    const timeElapsed = SECONDS_PER_ROUND - secondsRemaining;
+    const wpm = Math.floor((wordIndex + 1) / (timeElapsed / 60));
+    setWpm(wpm);
 
+  }
 
   // Calculate minutes remaining formatted
   let minutesRemaining = '';
@@ -125,7 +144,7 @@ function Game() {
       <div>
         <div class="score">{score}</div>
         <div class="timer">{minutesRemaining}</div>
-
+        <div class="wpm">{wpm} wpm</div>
         <div className="something">
 
           <div className="phrase">
@@ -159,13 +178,12 @@ function Game() {
             </div>
           </div>
         </div>
-        <input onCopy={preventCopyPasting} onPaste={preventCopyPasting} onCut={preventCopyPasting} class="playerInput" onChange={determine} type="text" placeholder="Type text here" value={playerInput} />
+        <input onCopy={preventCopyPasting} onPaste={preventCopyPasting} onCut={preventCopyPasting} class="playerInput" onChange={determine} type="text" placeholder="Type text here" value={playerInput} ref={playerInputEl} />
       </div>
     )
   } else {
     return (
-
-      <div>
+      <div className="endContainer">
         Game done
         <button class="restart" onClick={play}>New Race</button>
       </div>
