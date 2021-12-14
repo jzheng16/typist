@@ -137,13 +137,15 @@ function Game() {
           <div className={`circle green ${countdown === 1 ? 'active' : ''}`}></div>
           <p>:0{countdown}</p>
         </div>
-        {!countdownInterval &&
+        {!countdownInterval && scores.length > 0 &&
           <div>
             <h2>Your High Scores</h2>
             <Scoreboard scores={scores} />
-            <button className="play-btn" onClick={play}>Play</button>
           </div>
         }
+
+        {!countdownInterval &&
+          <button className="play-btn" onClick={play}>Play</button>}
       </div>
     )
   } else if (gameStatus === 'in-progress') {
