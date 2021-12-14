@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import car from './images/sports-car.png';
 import Scoreboard from './Scoreboard';
 import { generateNewSentence, generateUniqueId } from './helpers';
-const SECONDS_PER_ROUND = 60;
+const SECONDS_PER_ROUND = 120;
 const COUNTDOWN_IN_SECONDS = 5;
 
 function Game() {
@@ -71,10 +71,6 @@ function Game() {
         setWpm(wpm);
       }
     }
-
-
-
-
   }, [currIndex, sentence, wordIndex, secondsRemaining])
 
   const play = () => {
@@ -154,7 +150,7 @@ function Game() {
   } else if (gameStatus === 'in-progress') {
     return (
       <div>
-        <section class="stats-container">
+        <section className="stats-container">
           <div className="time-container">
             <p className="game-description">The race is on! Type the text below:</p>
             <div className="stats">
@@ -169,38 +165,57 @@ function Game() {
 
         <div className="gameContainer">
           <div className="phraseContainer">
-            <div className="phrase">
-              {sentence.map((word, i) => {
+            {wordIndex > 0 && sentence.slice(0, wordIndex).map((word, i) => {
+              return (
+                <span key={generateUniqueId()} className="word completed">{word}</span>
+              )
+            })
+            }
+            <div className="current">
+              {sentence.length !== wordIndex && sentence[wordIndex].split('').map((letter, i) => {
+                let status = '';
+                if (playerInput[i] === letter && currIndex >= i) {
+                  status = 'correct';
+                } else if (playerInput.length > i && playerInput[i] !== letter) {
+                  status = 'incorrect';
+                }
+                if (letter === ' ') {
+                  return (
+                    <span key={generateUniqueId()} className={`character ${status} ${i === currIndex ? 'active' : ''}`}> </span>
+                  )
+                }
                 return (
-                  <span key={generateUniqueId()} className={`word`}>{word}</span>
+                  <span key={generateUniqueId()} className={`character underlined ${status} ${i === currIndex ? 'active' : ''}`}>{letter}</span>
                 )
               })}
             </div>
-            <div className="playerPhrase">
-              {wordIndex > 0 &&
-                <div className="completedWords">
-                  {sentence.slice(0, wordIndex).map((word, i) => {
-                    return (
-                      <span key={generateUniqueId()} className="word completed">{word}</span>
-                    )
-                  })}
-                </div>
+
+            {sentence.slice(wordIndex + 1).join('').split('').map((letter, i) => {
+              if (i < playerInput.length - sentence[wordIndex].length) {
+                return (
+                  <span key={generateUniqueId()} className={`character incorrect`}>{letter}</span>
+                )
               }
-              <div className="currentInputDisplay">
-                {playerInput.split('').slice(0, currIndex).map((letter, i) => {
-                  return (
-                    <span key={generateUniqueId()} className={`character correct`}>{letter}</span>
-                  )
-                })}
-                {playerInput.split('').slice(currIndex).map((letter, i) => {
-                  return (
-                    <span key={generateUniqueId()} className={`character incorrect`}>&nbsp;</span>
-                  )
-                })}
-              </div>
-            </div>
+
+              return (
+                <span key={generateUniqueId()} className={`character`}>{letter}</span>
+              )
+            })}
           </div>
-          <input onCopy={preventCopyPasting} onPaste={preventCopyPasting} onCut={preventCopyPasting} className="playerInput" onChange={determine} type="text" placeholder="Type text here" value={playerInput} ref={playerInputEl} />
+          <input
+            className="playerInput"
+            type="text"
+            placeholder="Type text here"
+            value={playerInput}
+            ref={playerInputEl}
+            onCopy={preventCopyPasting}
+            onPaste={preventCopyPasting}
+            onCut={preventCopyPasting}
+            onChange={determine}
+            autoCapitalize="off"
+            autoComplete="off"
+            autoCorrect="off"
+          />
         </div>
 
       </div>
@@ -210,7 +225,6 @@ function Game() {
       <div className="endContainer">
         <div className="summary">
           <h1>Summary</h1>
-
         </div>
 
         <h2>Your High Scores</h2>

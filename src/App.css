@@ -8,6 +8,10 @@ body {
   min-height: 100vh;
 }
 
+p {
+  font-size: 24px;
+}
+
 .main-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -33,26 +37,15 @@ body {
   margin: 30px 0;
   font-size: 20px;
   font-family: "Roboto Mono", sans-serif;
+  word-break: break-word;
 }
 
 .phrase {
   font-size: 20px;
-  word-break: break-all;
-  position: absolute;
+  position: relative;
 }
 
 .playerPhrase {
-  position: absolute;
-  display: flex;
-}
-
-.completedWords {
-  z-index: 2;
-  margin-right: 12.02px;
-}
-
-.word.completed {
-  /* margin-right: 12.02px; */
 }
 
 .play-btn {
@@ -82,7 +75,6 @@ body {
 
 .game-description {
   font-weight: bold;
-  font-size: 20px;
   color: #3b5998;
 }
 
@@ -95,12 +87,10 @@ body {
 .wpm {
   color: #005894;
   font-weight: bold;
-  font-size: 20px;
   margin-right: 20px;
 }
 
 .timer {
-  font-size: 20px;
   font-weight: bold;
 }
 
@@ -116,19 +106,33 @@ body {
 }
 
 .character {
-  transition: all 0.3s;
+  transition: color 0.3s;
+  position: relative;
 }
+.character:first-child {
+  /* margin-left: 12.02px; */
+}
+
+/* .word.underlined {
+  border-bottom: 1px solid black;
+  text-decoration: underline;
+} */
 
 .word.completed {
   color: rgb(93, 212, 93);
 }
 
+.character.underlined {
+  padding-bottom: -1.5px;
+  border-bottom: 2px solid black;
+}
+
 .character.correct {
+  border-bottom: 2px solid rgb(93, 212, 93);
   color: rgb(93, 212, 93);
 }
 
 .character.incorrect {
-  z-index: -1;
   background-color: red;
   opacity: 0.7;
 }
@@ -211,7 +215,24 @@ body {
   opacity: 1;
 }
 
+@media screen and (max-width: 640px) {
+  p {
+    font-size: 20px;
+  }
+  .time-container {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stats {
+    margin: 0;
+  }
+}
 @media screen and (max-width: 580px) {
+  .time-container {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
   h1 {
     font-size: 26px;
   }
@@ -227,14 +248,42 @@ body {
     width: 75px;
     height: 75px;
   }
+}
 
-  .stats {
-    margin: 0;
+.current {
+  display: inline;
+  position: relative;
+}
+
+.currentDisplay {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+@keyframes cursor-blink {
+  from,
+  to {
+    background-color: transparent;
+  }
+  50% {
+    background-color: black;
   }
 }
-@media screen and (max-width: 486px) {
-  .time-container {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+
+/* .character.active {
+  position: relative;
+} */
+
+.character.active:before {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  content: "";
+  font-weight: 100;
+  width: 2px;
+  height: 21px;
+  background-color: #2e3d48;
+  display: inline-block;
+  animation: 1s cursor-blink step-end infinite;
 }
