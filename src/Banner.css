@@ -1,0 +1,23 @@
+.banner {
+  background-color: #005894;
+  height: 100vh;
+  position: relative;
+}
+
+.banner h1 {
+  color: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -150%);
+  font-size: 80px;
+}
+
+.banner img {
+  color: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 0%);
+  font-size: 80px;
+}
